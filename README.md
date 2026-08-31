@@ -7,6 +7,15 @@ is currently 15 seconds, so these changes keep rescheduling that sync while
 the plugin is running. After a sync completes, the plugin updates the notebook
 and restarts the 10-second timer from that point.
 
+On the mobile app, using the same approach would be too aggressive, as the
+sync-as-you-type delay is only 1 second, and making updates more frequently
+would drain a lot of battery. However, an existing workaround for mobile exists.
+In Joplin, open **Configuration > Synchronisation**, and enable the
+**Synchronise only over WiFi connection** setting. Then, so long as you are
+connected to internet via mobile internet only, the sync will not automatically
+trigger while typing, if you disable Joplin's regular synchronization
+interval as well.
+
 ## Install
 
 In Joplin, open **Tools > Options > Plugins**, select the gear menu, choose
