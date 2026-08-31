@@ -5,7 +5,8 @@ in the trash, or updates an existing trashed notebook with that exact name. It
 updates the notebook every 10 seconds. Joplin's desktop sync-as-you-type delay
 is currently 15 seconds, so these changes keep rescheduling that sync while
 the plugin is running. After a sync completes, the plugin updates the notebook
-and restarts the 10-second timer from that point.
+and restarts the 10-second timer from that point. The automatically triggered
+sync upon starting and exiting the app remains unaffected.
 
 On the mobile app, using the same approach would be too aggressive, as the
 sync-as-you-type delay is only 1 second, and making updates more frequently
