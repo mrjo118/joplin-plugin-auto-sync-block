@@ -1,0 +1,55 @@
+const fs = require('node:fs');
+const path = require('node:path');
+
+const root = path.resolve(__dirname, '..');
+const outputDirectory = path.join(root, 'publish');
+const outputFile = path.join(outputDirectory, 'plugin.mrjo118.auto-sync-block.jpl');
+const inputFiles = ['index.js', 'manifest.json'];
+
+function writeString(header, offset, length, value) {
+	header.write(value, offset, Math.min(length, Buffer.byteLength(value)), 'utf8');
+}
+
+function writeOctal(header, offset, length, value) {
+	const octal = value.toString(8).padStart(length - 1, '0');
+	writeString(header, offset, length, `${octal}\0`);
+}
+
+function createHeader(name, size) {
+	const header = Buffer.alloc(512);
+	writeString(header, 0, 100, name);
+	writeOctal(header, 100, 8, 0o644);
+	writeOctal(header, 108, 8, 0);
+	writeOctal(header, 116, 8, 0);
+	writeOctal(header, 124, 12, size);
+	writeOctal(header, 136, 12, Math.floor(Date.now() / 1000));
+	header.fill(0x20, 148, 156);
+	header[156] = '0'.charCodeAt(0);
+	writeString(header, 257, 6, 'ustar\0');
+	writeString(header, 263, 2, '00');
+
+	const checksum = header.reduce((sum, byte) => sum + byte, 0);
+	const checksumText = checksum.toString(8).padStart(6, '0');
+	writeString(header, 148, 8, `${checksumText}\0 `);
+	return header;
+}
+
+function createTar(files) {
+	const parts = [];
+	for (const file of files) {
+		parts.push(createHeader(file.name, file.contents.length), file.contents);
+		const padding = (512 - (file.contents.length % 512)) % 512;
+		if (padding) parts.push(Buffer.alloc(padding));
+	}
+	parts.push(Buffer.alloc(1024));
+	return Buffer.concat(parts);
+}
+
+const files = inputFiles.map((name) => ({
+	name,
+	contents: fs.readFileSync(path.join(root, name)),
+}));
+
+fs.mkdirSync(outputDirectory, { recursive: true });
+fs.writeFileSync(outputFile, createTar(files));
+console.log(`Created ${path.relative(root, outputFile)}`);

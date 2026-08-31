@@ -1,0 +1,13 @@
+{
+	"name": "joplin-plugin-auto-sync-block",
+	"private": true,
+	"version": "1.0.0",
+	"description": "A plugin that continually postpones sync-as-you-type using a trashed notebook.",
+	"scripts": {
+		"dist": "node scripts/dist.js"
+	},
+	"license": "MIT",
+	"keywords": [
+		"joplin-plugin"
+	]
+}
