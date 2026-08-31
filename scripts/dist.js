@@ -3,7 +3,9 @@ const path = require('node:path');
 
 const root = path.resolve(__dirname, '..');
 const outputDirectory = path.join(root, 'publish');
-const outputFile = path.join(outputDirectory, 'plugin.mrjo118.auto-sync-block.jpl');
+const pluginBasename = 'plugin.mrjo118.auto-sync-block';
+const outputFile = path.join(outputDirectory, `${pluginBasename}.jpl`);
+const manifestOutputFile = path.join(outputDirectory, `${pluginBasename}.json`);
 const inputFiles = ['index.js', 'manifest.json'];
 
 function writeString(header, offset, length, value) {
@@ -50,6 +52,9 @@ const files = inputFiles.map((name) => ({
 	contents: fs.readFileSync(path.join(root, name)),
 }));
 
+fs.rmSync(outputDirectory, { recursive: true, force: true });
 fs.mkdirSync(outputDirectory, { recursive: true });
 fs.writeFileSync(outputFile, createTar(files));
+fs.copyFileSync(path.join(root, 'manifest.json'), manifestOutputFile);
 console.log(`Created ${path.relative(root, outputFile)}`);
+console.log(`Created ${path.relative(root, manifestOutputFile)}`);
