@@ -5,5 +5,6 @@
 	"version": "1.0.0",
 	"name": "Auto Sync Block",
 	"description": "A plugin that continually postpones sync-as-you-type using a trashed notebook.",
-	"author": "mrjo118"
+	"author": "mrjo118",
+	"repository_url": "https://github.com/mrjo118/joplin-plugin-auto-sync-block"
 }
