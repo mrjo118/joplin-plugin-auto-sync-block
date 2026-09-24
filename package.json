@@ -1,6 +1,6 @@
 {
 	"name": "joplin-plugin-auto-sync-block",
-	"version": "1.0.2",
+	"version": "1.0.3",
 	"description": "A plugin that continually postpones sync-as-you-type using a trashed notebook.",
 	"files": [
 		"publish/"
