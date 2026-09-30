@@ -4,9 +4,10 @@ This desktop-only Joplin plugin creates a notebook named `[Reserved]` directly
 in the trash, or updates an existing trashed notebook with that exact name. It
 updates the notebook every 10 seconds. Joplin's desktop sync-as-you-type delay
 is currently 15 seconds, so these changes keep rescheduling that sync while
-the plugin is running. After a sync completes, the plugin updates the notebook
-and restarts the 10-second timer from that point. The automatically triggered
-sync upon starting and exiting the app remains unaffected.
+the plugin is running. While a sync is running, the plugin pauses its updates.
+After the sync completes, it restarts the 10-second timer, with the next update
+occurring on the first timer tick. The automatically triggered sync upon
+starting and exiting the app remains unaffected.
 
 On the mobile app, using the same approach would be too aggressive, as the
 sync-as-you-type delay is only 1 second, and making updates more frequently

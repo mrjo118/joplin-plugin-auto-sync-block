@@ -1,6 +1,5 @@
 const TEMPORARY_NOTEBOOK_TITLE = '[Reserved]';
 const UPDATE_INTERVAL_MS = 10 * 1000;
-const POST_SYNC_HANDOFF_MS = 1000;
 
 async function findTemporaryNotebook() {
 	let page = 1;
@@ -24,9 +23,10 @@ async function findTemporaryNotebook() {
 	}
 }
 
-async function touchTrashedNotebook() {
+async function touchTrashedNotebook(shouldUpdate = () => true) {
 	const now = Date.now();
 	const notebook = await findTemporaryNotebook();
+	if (!shouldUpdate()) return;
 
 	if (notebook) {
 		await joplin.data.put(['folders', notebook.id], null, {
@@ -44,11 +44,20 @@ joplin.plugins.register({
 	onStart: async () => {
 		let updatePromise = null;
 		let updateInterval = null;
-		let postSyncTimeout = null;
+		let syncInProgress = false;
+
+		const stopInterval = () => {
+			if (updateInterval) {
+				clearInterval(updateInterval);
+				updateInterval = null;
+			}
+		};
 
 		const update = () => {
+			if (syncInProgress) return Promise.resolve();
+
 			if (!updatePromise) {
-				updatePromise = touchTrashedNotebook()
+				updatePromise = touchTrashedNotebook(() => !syncInProgress)
 					.catch(error => {
 						console.error('Could not update the trashed [Reserved] notebook:', error);
 					})
@@ -61,37 +70,31 @@ joplin.plugins.register({
 		};
 
 		const startInterval = () => {
+			if (syncInProgress || updateInterval) return;
 			updateInterval = setInterval(() => void update(), UPDATE_INTERVAL_MS);
 		};
 
-		const updateAndRestartInterval = async () => {
-			if (updateInterval) {
-				clearInterval(updateInterval);
-				updateInterval = null;
-			}
+		const initializeAndStartInterval = async () => {
+			stopInterval();
 
-			// If a timer update was already running when sync completed, wait for it
-			// and then make a distinct post-sync update.
+			// Avoid overlapping with an update that may already be in progress.
 			const pendingUpdate = updatePromise;
 			if (pendingUpdate) await pendingUpdate;
+			if (syncInProgress) return;
 			await update();
+			if (syncInProgress) return;
 			startInterval();
 		};
 
-		await updateAndRestartInterval();
-		await joplin.workspace.onSyncComplete(() => {
-			if (updateInterval) {
-				clearInterval(updateInterval);
-				updateInterval = null;
-			}
-			if (postSyncTimeout) clearTimeout(postSyncTimeout);
-
-			// Joplin publishes onSyncComplete just before its final dirty-item check.
-			// Let that cleanup finish so this update does not cause a follow-up sync.
-			postSyncTimeout = setTimeout(() => {
-				postSyncTimeout = null;
-				void updateAndRestartInterval();
-			}, POST_SYNC_HANDOFF_MS);
+		await joplin.workspace.onSyncStart(() => {
+			syncInProgress = true;
+			stopInterval();
 		});
+		await joplin.workspace.onSyncComplete(() => {
+			syncInProgress = false;
+			stopInterval();
+			startInterval();
+		});
+		await initializeAndStartInterval();
 	},
 });
