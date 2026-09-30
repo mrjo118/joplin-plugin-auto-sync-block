@@ -6,7 +6,9 @@ async function findTemporaryNotebook() {
 	let page = 1;
 
 	while (true) {
-		const response = await joplin.data.get(['folders'], {
+		const response = await joplin.data.get(['search'], {
+			query: TEMPORARY_NOTEBOOK_TITLE,
+			type: 'folder',
 			fields: ['id', 'title', 'deleted_time'],
 			include_deleted: '1',
 			limit: 100,
