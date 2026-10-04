@@ -29,3 +29,9 @@ affect the independent recurrent-sync timer. If you do not wish to see the
 [Reserved] notebook in the trash, you can collapse the trash to avoid showing
 all folders under it. Note that if you empty the trash, the notebook is
 automatically re-created, so deleting it is not an issue.
+
+Something worth noting: when you set up a new device with the plugin installed,
+you will see one additional duplicate of the `[Reserved]` notebook after the
+device syncs. This happens because the plugin cannot initially see the notebook
+that already exists on the sync target. You can delete either one or all of the
+`[Reserved]` notebooks; the plugin will then re-create just one if necessary.
