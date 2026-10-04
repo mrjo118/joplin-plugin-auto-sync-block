@@ -37,6 +37,6 @@ new device with the plugin installed, a duplicate is created because the plugin
 cannot initially see the notebook that already exists on the sync target. When
 end-to-end encryption (E2EE) is enabled, a duplicate can also be created if an
 update to the notebook is downloaded from another device and remains encrypted
-after the sync has completed, when the plugin next searches for it. You can
-delete some or all of the `[Reserved]` notebooks; the plugin will then re-create
-just one if necessary.
+after the sync has completed, when the plugin next searches for it, but this
+should rarely happen. You can delete some or all of the `[Reserved]` notebooks;
+the plugin will then re-create just one if necessary.
