@@ -30,8 +30,13 @@ affect the independent recurrent-sync timer. If you do not wish to see the
 all folders under it. Note that if you empty the trash, the notebook is
 automatically re-created, so deleting it is not an issue.
 
-Something worth noting: when you set up a new device with the plugin installed,
-you will see a duplicate of the `[Reserved]` notebook is created after the
-device syncs. This happens because the plugin cannot initially see the notebook
-that already exists on the sync target. You can delete either one or all of the
-`[Reserved]` notebooks; the plugin will then re-create just one if necessary.
+## Limitations
+
+Duplicate `[Reserved]` notebooks can occasionally be created. When you set up a
+new device with the plugin installed, a duplicate is created because the plugin
+cannot initially see the notebook that already exists on the sync target. When
+end-to-end encryption (E2EE) is enabled, a duplicate can also be created if an
+update to the notebook is downloaded from another device and remains encrypted
+after the sync has completed, when the plugin next searches for it. You can
+delete some or all of the `[Reserved]` notebooks; the plugin will then re-create
+just one if necessary.
